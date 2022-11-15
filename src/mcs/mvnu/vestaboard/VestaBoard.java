@@ -34,8 +34,13 @@ public class VestaBoard {
         QuestionMark(60), DegreeSign(62), PoppyRed(63), Orange(64), Yellow(65),
         Green(66), ParisBlue(67), Violet(68), White(69);
 
+        private final int charValue;
+
         VestaChars(int i) {
+            charValue = i;
         }
+
+        public int getCharValue() {return charValue;}
     }
 
     private final int ROWS=6;                   // number of rows in Vestaboard
@@ -106,7 +111,7 @@ public class VestaBoard {
             msgToSend.append("[");
             for (int j = 0; j < COLS; j++) {
                 // Need Vesta Character Encoding, not ASCII/Unicode encoding
-                msgToSend.append(board[i][j].ordinal());
+                msgToSend.append(board[i][j].getCharValue());
                 if (j < COLS-1) {
                     msgToSend.append(",");
                 }
@@ -224,6 +229,6 @@ public class VestaBoard {
      */
     public static void main(String args[]) throws ConfigurationException, IOException, InterruptedException {
         VestaBoard v = new VestaBoard();
-        v.postMessage("Hello Octavia");
+        v.postMessage("Hello from Dr. Robbeloth's VestBoard Java API");
     }
 }
