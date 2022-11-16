@@ -1,4 +1,4 @@
 # Mark docs directory to keep it from being counted in language stats
-docs linguist-documentation
+docs/* linguist-documentation
 #Mark lib directory to keep apache-commons stuff from being counted
-lib linguist-vendored
+lib/* linguist-vendored
