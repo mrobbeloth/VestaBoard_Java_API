@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="VestaBoard_Java_API:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/VestaBoard_Java_API_jar</output-path>
+    <root id="archive" name="VestaBoard_Java_API.jar">
+      <element id="module-output" name="VestaBoard_Java_API" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/commons-lang3-3.12.0/commons-lang3-3.12.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/commons-configuration2-2.8.0/commons-configuration2-2.8.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/commons-text-1.10.0/commons-text-1.10.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/commons-logging-1.2/commons-logging-1.2.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

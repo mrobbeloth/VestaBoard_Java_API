@@ -34,12 +34,21 @@ public class VestaBoard {
         QuestionMark(60), DegreeSign(62), PoppyRed(63), Orange(64), Yellow(65),
         Green(66), ParisBlue(67), Violet(68), White(69);
 
-        private final int charValue;
+        private final int charValue; // Internal Vestaboard encoding for the character
 
+        /**
+         * Associate the enumeration value with a variable that can be fetched
+         * @param i
+         */
         VestaChars(int i) {
             charValue = i;
         }
 
+        /**
+         * Retrieve the enumeration value for the Vestaboard character. Do not use
+         * the ordinal method of the enumeration, the values will not match up.
+         * @return
+         */
         public int getCharValue() {return charValue;}
     }
 
@@ -48,13 +57,13 @@ public class VestaBoard {
 
     private boolean truncate = false;
     private boolean wrap = true;
-    private final String api_key;
+    private final String api_key;               // Key to allow use of Vestaboard Installable APIs
     private final String api_secret;
-    private final String api_rw_key;
+    private final String api_rw_key;            // Key to use for direct reading/writing of Vestaboard (max 1 per board)
 
-    private HttpClient httpClient;
+    private HttpClient httpClient;              // Used to communicate with VestaBoard APIs
 
-    private VestaChars[][] board;
+    private VestaChars[][] board;               // Data Structure Representation of VestaBoard
 
     VestaBoard() throws IOException, ConfigurationException {
         // Init virtual rep of Vestaboard
