@@ -65,7 +65,22 @@ public class VestaBoard {
 
     private VestaChars[][] board;               // Data Structure Representation of VestaBoard
 
-    VestaBoard() throws IOException, ConfigurationException {
+    /**
+     *
+     * @throws ConfigurationException
+     * @throws IOException
+     */
+    VestaBoard() throws ConfigurationException, IOException {
+        this("credentials-virtrual.ini");
+    }
+
+    /**
+     * Create a Vestaboard virtual object
+     * @param filename -- credentials filename
+     * @throws IOException
+     * @throws ConfigurationException
+     */
+    VestaBoard(String filename) throws IOException, ConfigurationException {
         // Init virtual rep of Vestaboard
         board = new VestaChars[ROWS][COLS];
         for(int i = 0; i < ROWS; i++) {
@@ -77,7 +92,6 @@ public class VestaBoard {
 
         // Read in ini file
         INIConfiguration iniConfiguration = new INIConfiguration();
-        String filename = "credentials-virtual.ini";
         try (FileReader fileReader = new FileReader(filename)) {
             iniConfiguration.read(fileReader);
 
@@ -149,7 +163,7 @@ public class VestaBoard {
         int col = 0;
         for (int i = 0; i < len; i++, col++) {
             char c = msg.charAt(i);
-            if (i % (COLS-1)==0) {
+            if (col == (COLS-1)) {
                 row++;
                 col = 0;
             }
@@ -210,6 +224,7 @@ public class VestaBoard {
                 case '/' : board[row][col] = VestaChars.Slash; break;
                 case '?' : board[row][col] = VestaChars.QuestionMark; break;
                 case '°' : board[row][col] = VestaChars.DegreeSign; break;
+                case '\n': col = 0; row++; break;
                 default:
                     board[row][col] = VestaChars.Blank;
             }
@@ -237,7 +252,7 @@ public class VestaBoard {
      * @throws InterruptedException
      */
     public static void main(String args[]) throws ConfigurationException, IOException, InterruptedException {
-        VestaBoard v = new VestaBoard();
-        v.postMessage("Hello from Dr. Robbeloth's VestBoard Java API");
+        VestaBoard v = new VestaBoard("credentials.ini");
+        v.postMessage("Welcome back MCS\nStudents! CSC-2020 \nLab 0 1/12/2023 @\n12:50 pm - 3:00 pm");
     }
 }
