@@ -156,6 +156,7 @@ public class VestaBoard {
      * @param msg Input message to write to board
      * @throws IOException
      * @throws InterruptedException
+     * @see  <a href="https://www.compart.com/en/unicode/">. Unicode Docs..</a>
      */
     public void postMessage(String msg) throws IOException, InterruptedException {
         int len = msg.length();
@@ -224,6 +225,13 @@ public class VestaBoard {
                 case '/' : board[row][col] = VestaChars.Slash; break;
                 case '?' : board[row][col] = VestaChars.QuestionMark; break;
                 case '°' : board[row][col] = VestaChars.DegreeSign; break;
+                case '\uDFE5' : board[row][col] = VestaChars.PoppyRed; break;
+                case '\uDFE6' : board[row][col] = VestaChars.ParisBlue; break;
+                case '\uDFE7' : board[row][col] = VestaChars.Orange; break;
+                case '\uDFE8' : board[row][col] = VestaChars.Yellow; break;
+                case '\uDFE9' : board[row][col] = VestaChars.Green; break;
+                case '\uDFEA' : board[row][col] = VestaChars.Violet; break;
+                case '\u25A1' : board[row][col] = VestaChars.White; break;
                 case '\n': col = 0; row++; break;
                 default:
                     board[row][col] = VestaChars.Blank;
@@ -253,6 +261,7 @@ public class VestaBoard {
      */
     public static void main(String args[]) throws ConfigurationException, IOException, InterruptedException {
         VestaBoard v = new VestaBoard("credentials.ini");
-        v.postMessage("Welcome back MCS\nStudents! CSC-2020 \nLab 0 1/12/2023 @\n12:50 pm - 3:00 pm");
+        v.postMessage("\uDFE6 Welcome back MCS\nStudents! CSC-2020 " +
+                           "\nLab 0 1/12/2023 @\n12:50 pm - 3:00 pm \uDFE6");
     }
 }
