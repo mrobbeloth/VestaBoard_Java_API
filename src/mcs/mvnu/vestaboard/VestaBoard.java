@@ -79,7 +79,7 @@ public class VestaBoard {
      * @throws ConfigurationException Any exception that occurs while initializing a Configuration object.
      * @throws IOException Signals that an I/O exception has occurred
      */
-    VestaBoard() throws ConfigurationException, IOException {
+    public VestaBoard() throws ConfigurationException, IOException {
         this("credentials-virtual.ini");
     }
 
@@ -89,7 +89,7 @@ public class VestaBoard {
      * @throws IOException Signals that an I/O exception has occurred
      * @throws ConfigurationException Any exception that occurs while initializing a Configuration object.
      */
-    VestaBoard(String filename) throws IOException, ConfigurationException {
+    public VestaBoard(String filename) throws IOException, ConfigurationException {
         // Init virtual rep of Vestaboard
         board = new VestaChars[ROWS][COLS];
         for(int i = 0; i < ROWS; i++) {
@@ -186,7 +186,7 @@ public class VestaBoard {
                 case 'F', 'f': board[row][col] = VestaChars.F; break;
                 case 'G', 'g': board[row][col] = VestaChars.G; break;
                 case 'H', 'h': board[row][col] = VestaChars.H; break;
-                case 'I', 'i': board[row][col] = VestaChars.I; break;
+                case 'I', 'i', '|': board[row][col] = VestaChars.I; break;
                 case 'J', 'j': board[row][col] = VestaChars.J; break;
                 case 'K', 'k': board[row][col] = VestaChars.K; break;
                 case 'L', 'l': board[row][col] = VestaChars.L; break;
@@ -233,7 +233,7 @@ public class VestaBoard {
                 case '.' : board[row][col] = VestaChars.Period; break;
                 case '/' : board[row][col] = VestaChars.Slash; break;
                 case '?' : board[row][col] = VestaChars.QuestionMark; break;
-                case '°' : board[row][col] = VestaChars.DegreeSign; break;
+                case '°', '*' : board[row][col] = VestaChars.DegreeSign; break;
                 case UNICODE_UTF16_RED: board[row][col] = VestaChars.PoppyRed; break;
                 case UNICODE_UTF16_BLUE: board[row][col] = VestaChars.ParisBlue; break;
                 case UNICODE_UTF16_ORANGE: board[row][col] = VestaChars.Orange; break;
@@ -269,7 +269,7 @@ public class VestaBoard {
      * @throws InterruptedException Thread is interrupted
      */
     public static void main(String[] args) throws ConfigurationException, IOException, InterruptedException {
-        VestaBoard v = new VestaBoard("credentials.ini");
+        VestaBoard v = new VestaBoard("credentials-virtual.ini");
         v.postMessage(UNICODE_UTF16_GREEN + "Welcome back MCS\nStudents! CSC-2020 " +
                            "\nLab 0 1/12/2023 @\n12:50 pm - 3:00 pm"+UNICODE_UTF16_BLUE);
     }
