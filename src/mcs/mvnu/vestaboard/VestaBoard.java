@@ -38,7 +38,7 @@ public class VestaBoard {
 
         /**
          * Associate the enumeration value with a variable that can be fetched
-         * @param i
+         * @param i -- the value to be fetched later on
          */
         VestaChars(int i) {
             charValue = i;
@@ -47,7 +47,7 @@ public class VestaBoard {
         /**
          * Retrieve the enumeration value for the Vestaboard character. Do not use
          * the ordinal method of the enumeration, the values will not match up.
-         * @return
+         * @return the enumerated value for the Vestaboard character
          */
         public int getCharValue() {return charValue;}
     }
@@ -61,24 +61,33 @@ public class VestaBoard {
     private final String api_secret;
     private final String api_rw_key;            // Key to use for direct reading/writing of Vestaboard (max 1 per board)
 
-    private HttpClient httpClient;              // Used to communicate with VestaBoard APIs
+    private final HttpClient httpClient;              // Used to communicate with VestaBoard APIs
 
-    private VestaChars[][] board;               // Data Structure Representation of VestaBoard
+    private final VestaChars[][] board;               // Data Structure Representation of VestaBoard
+
+    public static final char UNICODE_UTF16_RED = '\uDFE5';
+    public static final char UNICODE_UTF16_BLUE = '\uDFE6';
+    public static final char UNICODE_UTF16_ORANGE = '\uDFE7';
+    public static final char UNICODE_UTF16_YELLOW = '\uDFE8';
+    public static final char UNICODE_UTF16_GREEN = '\uDFE9';
+    public static final char UNICODE_UTF16_VIOLET = '\uDFEA';
+    public static final char UNICODE_UTF16_WHITE = '\u25A1';
+
 
     /**
-     *
-     * @throws ConfigurationException
-     * @throws IOException
+     * Base constructor, will pass credentials-virtual.ini as config file to constructor taking a string filename
+     * @throws ConfigurationException Any exception that occurs while initializing a Configuration object.
+     * @throws IOException Signals that an I/O exception has occurred
      */
     VestaBoard() throws ConfigurationException, IOException {
-        this("credentials-virtrual.ini");
+        this("credentials-virtual.ini");
     }
 
     /**
      * Create a Vestaboard virtual object
-     * @param filename -- credentials filename
-     * @throws IOException
-     * @throws ConfigurationException
+     * @param filename credentials filename
+     * @throws IOException Signals that an I/O exception has occurred
+     * @throws ConfigurationException Any exception that occurs while initializing a Configuration object.
      */
     VestaBoard(String filename) throws IOException, ConfigurationException {
         // Init virtual rep of Vestaboard
@@ -154,8 +163,8 @@ public class VestaBoard {
      * Convert String message into VestaBoard message
      * So far, no support for color tiles
      * @param msg Input message to write to board
-     * @throws IOException
-     * @throws InterruptedException
+     * @throws IOException Signals that an I/O exception has occurred
+     * @throws InterruptedException Thread is interrupted
      * @see  <a href="https://www.compart.com/en/unicode/">. Unicode Docs..</a>
      */
     public void postMessage(String msg) throws IOException, InterruptedException {
@@ -225,13 +234,13 @@ public class VestaBoard {
                 case '/' : board[row][col] = VestaChars.Slash; break;
                 case '?' : board[row][col] = VestaChars.QuestionMark; break;
                 case '°' : board[row][col] = VestaChars.DegreeSign; break;
-                case '\uDFE5' : board[row][col] = VestaChars.PoppyRed; break;
-                case '\uDFE6' : board[row][col] = VestaChars.ParisBlue; break;
-                case '\uDFE7' : board[row][col] = VestaChars.Orange; break;
-                case '\uDFE8' : board[row][col] = VestaChars.Yellow; break;
-                case '\uDFE9' : board[row][col] = VestaChars.Green; break;
-                case '\uDFEA' : board[row][col] = VestaChars.Violet; break;
-                case '\u25A1' : board[row][col] = VestaChars.White; break;
+                case UNICODE_UTF16_RED: board[row][col] = VestaChars.PoppyRed; break;
+                case UNICODE_UTF16_BLUE: board[row][col] = VestaChars.ParisBlue; break;
+                case UNICODE_UTF16_ORANGE: board[row][col] = VestaChars.Orange; break;
+                case UNICODE_UTF16_YELLOW: board[row][col] = VestaChars.Yellow; break;
+                case UNICODE_UTF16_GREEN: board[row][col] = VestaChars.Green; break;
+                case UNICODE_UTF16_VIOLET: board[row][col] = VestaChars.Violet; break;
+                case UNICODE_UTF16_WHITE: board[row][col] = VestaChars.White; break;
                 case '\n': col = 0; row++; break;
                 default:
                     board[row][col] = VestaChars.Blank;
@@ -254,14 +263,14 @@ public class VestaBoard {
 
     /**
      * Quick test method
-     * @param args
-     * @throws ConfigurationException
-     * @throws IOException
-     * @throws InterruptedException
+     * @param args values from the command line or runtime configuration editor to pass to code in the method
+     * @throws ConfigurationException Any exception that occurs while initializing a Configuration object.
+     * @throws IOException Signals that an I/O Signals that an I/O exception has occurred
+     * @throws InterruptedException Thread is interrupted
      */
-    public static void main(String args[]) throws ConfigurationException, IOException, InterruptedException {
+    public static void main(String[] args) throws ConfigurationException, IOException, InterruptedException {
         VestaBoard v = new VestaBoard("credentials.ini");
-        v.postMessage("\uDFE6 Welcome back MCS\nStudents! CSC-2020 " +
-                           "\nLab 0 1/12/2023 @\n12:50 pm - 3:00 pm \uDFE6");
+        v.postMessage(UNICODE_UTF16_GREEN + "Welcome back MCS\nStudents! CSC-2020 " +
+                           "\nLab 0 1/12/2023 @\n12:50 pm - 3:00 pm"+UNICODE_UTF16_BLUE);
     }
 }
