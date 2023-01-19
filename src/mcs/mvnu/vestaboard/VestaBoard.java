@@ -1,8 +1,11 @@
 
 package mcs.mvnu.vestaboard;
 
+import netscape.javascript.JSObject;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -10,6 +13,10 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A class that serves as an abstraction for a VestaBoard in Java
@@ -262,6 +269,184 @@ public class VestaBoard {
     }
 
     /**
+     * Read the last message written to the VestaBoard
+     * @return the last message written to the board
+     */
+    public String readMessage() throws IOException, InterruptedException {
+        /* Prepare Request-Response HTTP Post message to write to the VestaBoard
+         *  Be mindful if writing to virtual or real board */
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder().header("X-Vestaboard-Read-Write-Key", api_rw_key).
+                uri(URI.create("https://rw.vestaboard.com")).GET().build();
+        HttpResponse<String> response = client.send(request,
+                HttpResponse.BodyHandlers.ofString());
+
+        System.out.println("Response code:"+response.statusCode());
+        System.out.println(response.body());
+        JSONObject jsonObj = new JSONObject(response.body());
+        JSONObject jsonObjCM = jsonObj.getJSONObject("currentMessage");
+        String layoutArray = jsonObjCM.getString("layout");
+
+        char[] layoutArrayAsCharArr = layoutArray.toCharArray();
+        StringBuilder convertedString = new StringBuilder();
+        layoutArray = layoutArray.substring(1,layoutArray.length()-1);
+        final Pattern pattern = Pattern.compile("([0-9]+(,[0-9]+)+)");
+        final Matcher matcher = pattern.matcher(layoutArray);
+        List<String> allMatches = new ArrayList<String>();
+        while (matcher.find()) {
+            allMatches.add(matcher.group());
+         }
+        List<String> elements = new ArrayList<String>();
+        for(String aMatch : allMatches) {
+            String[] elementsInARow = aMatch.split(",");
+            for(String e : elementsInARow) {
+                elements.add(e);
+            }
+        }
+        System.out.println("Blah");
+
+        for(int i = 0; i < elements.size(); i++) {
+            int value = Integer.valueOf(elements.get(i));
+            if (value == '[' || value == ']')
+                continue;
+            else if (value == VestaChars.PoppyRed.getCharValue())
+                convertedString.append(UNICODE_UTF16_RED);
+            else if (value == VestaChars.ParisBlue.getCharValue())
+                convertedString.append(UNICODE_UTF16_BLUE);
+            else if (value == VestaChars.White.getCharValue())
+                convertedString.append(UNICODE_UTF16_WHITE);
+            else if (value == VestaChars.Green.getCharValue())
+                convertedString.append(UNICODE_UTF16_GREEN);
+            else if (value == VestaChars.Orange.getCharValue())
+                convertedString.append(UNICODE_UTF16_ORANGE);
+            else if (value == VestaChars.Violet.getCharValue())
+                convertedString.append(UNICODE_UTF16_VIOLET);
+            else if (value == VestaChars.A.getCharValue())
+                convertedString.append('A');
+            else if (value == VestaChars.B.getCharValue())
+                convertedString.append('B');
+            else if (value == VestaChars.C.getCharValue())
+                convertedString.append('C');
+            else if (value == VestaChars.D.getCharValue())
+                convertedString.append('D');
+            else if (value == VestaChars.E.getCharValue())
+                convertedString.append('E');
+            else if (value == VestaChars.F.getCharValue())
+                convertedString.append('F');
+            else if (value == VestaChars.G.getCharValue())
+                convertedString.append('G');
+            else if (value == VestaChars.H.getCharValue())
+                convertedString.append('H');
+            else if (value == VestaChars.I.getCharValue())
+                convertedString.append('I');
+            else if (value == VestaChars.J.getCharValue())
+                convertedString.append('J');
+            else if (value == VestaChars.K.getCharValue())
+                convertedString.append('K');
+            else if (value == VestaChars.J.getCharValue())
+                convertedString.append('J');
+            else if (value == VestaChars.L.getCharValue())
+                convertedString.append('L');
+            else if (value == VestaChars.M.getCharValue())
+                convertedString.append('M');
+            else if (value == VestaChars.N.getCharValue())
+                convertedString.append('N');
+            else if (value == VestaChars.O.getCharValue())
+                convertedString.append('O');
+            else if (value == VestaChars.P.getCharValue())
+                convertedString.append('P');
+            else if (value == VestaChars.Q.getCharValue())
+                convertedString.append('Q');
+            else if (value == VestaChars.R.getCharValue())
+                convertedString.append('R');
+            else if (value == VestaChars.S.getCharValue())
+                convertedString.append('S');
+            else if (value == VestaChars.T.getCharValue())
+                convertedString.append('T');
+            else if (value == VestaChars.U.getCharValue())
+                convertedString.append('U');
+            else if (value == VestaChars.V.getCharValue())
+                convertedString.append('V');
+            else if (value == VestaChars.W.getCharValue())
+                convertedString.append('W');
+            else if (value == VestaChars.X.getCharValue())
+                convertedString.append('X');
+            else if (value == VestaChars.Y.getCharValue())
+                convertedString.append('Y');
+            else if (value == VestaChars.Z.getCharValue())
+                convertedString.append('Z');
+            else if (value == VestaChars.One.getCharValue())
+                convertedString.append('1');
+            else if (value == VestaChars.Two.getCharValue())
+                convertedString.append('2');
+            else if (value == VestaChars.Three.getCharValue())
+                convertedString.append('3');
+            else if (value == VestaChars.Four.getCharValue())
+                convertedString.append('4');
+            else if (value == VestaChars.Five.getCharValue())
+                convertedString.append('5');
+            else if (value == VestaChars.Six.getCharValue())
+                convertedString.append('6');
+            else if (value == VestaChars.Seven.getCharValue())
+                convertedString.append('7');
+            else if (value == VestaChars.Eight.getCharValue())
+                convertedString.append('8');
+            else if (value == VestaChars.Nine.getCharValue())
+                convertedString.append('9');
+            else if (value == VestaChars.Zero.getCharValue())
+                convertedString.append('0');
+            else if (value == VestaChars.Blank.getCharValue())
+                convertedString.append(' ');
+            else if (value == VestaChars.Hyphen.getCharValue())
+                convertedString.append('-');
+            else if (value == VestaChars.ExaminationMark.getCharValue())
+                convertedString.append('!');
+            else if (value == VestaChars.AtSign.getCharValue())
+                convertedString.append('@');
+            else if (value == VestaChars.PoundSign.getCharValue())
+                convertedString.append('#');
+            else if (value == VestaChars.DollarSign.getCharValue())
+                convertedString.append('$');
+            else if (value == VestaChars.LeftParen.getCharValue())
+                convertedString.append('(');
+            else if (value == VestaChars.RightParen.getCharValue())
+                convertedString.append(')');
+            else if (value == VestaChars.PlusSign.getCharValue())
+                convertedString.append('+');
+            else if (value == VestaChars.DoubleQuote.getCharValue())
+                convertedString.append('"');
+            else if (value == VestaChars.Colon.getCharValue())
+                convertedString.append(':');
+            else if (value == VestaChars.SingleQuote.getCharValue())
+                convertedString.append('\'');
+            else if (value == VestaChars.Ampersand.getCharValue())
+                convertedString.append('&');
+            else if (value == VestaChars.EqualsSign.getCharValue())
+                convertedString.append('=');
+            else if (value == VestaChars.PercentSign.getCharValue())
+                convertedString.append('%');
+            else if (value == VestaChars.DegreeSign.getCharValue())
+                convertedString.append('°');
+            else if (value == VestaChars.QuestionMark.getCharValue())
+                convertedString.append('?');
+            else if (value == VestaChars.Slash.getCharValue())
+                convertedString.append('\\');
+            else if (value == VestaChars.Semicolon.getCharValue())
+                convertedString.append(';');
+            else if (value == VestaChars.Comma.getCharValue())
+                convertedString.append(',');
+            else if (value == VestaChars.Period.getCharValue())
+                convertedString.append('.');
+            else
+                convertedString.append("");
+
+            }
+
+        System.out.println(convertedString);
+        return convertedString.toString();
+    }
+
+    /**
      * Quick test method
      * @param args values from the command line or runtime configuration editor to pass to code in the method
      * @throws ConfigurationException Any exception that occurs while initializing a Configuration object.
@@ -270,7 +455,8 @@ public class VestaBoard {
      */
     public static void main(String[] args) throws ConfigurationException, IOException, InterruptedException {
         VestaBoard v = new VestaBoard("credentials-virtual.ini");
-        v.postMessage(UNICODE_UTF16_GREEN + "Welcome back MCS\nStudents! CSC-2020 " +
-                           "\nLab 0 1/12/2023 @\n12:50 pm - 3:00 pm"+UNICODE_UTF16_BLUE);
+        System.out.println("Last Message written: " + v.readMessage());
+        v.postMessage(UNICODE_UTF16_GREEN + " MCS Discord Server Invite: " +
+                           "\nhttps://discord.gg/x2v9AWgwsC "+UNICODE_UTF16_BLUE);
     }
 }
