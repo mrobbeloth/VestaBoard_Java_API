@@ -61,6 +61,7 @@ public class VestaBoard {
 
     private final int ROWS=6;                   // number of rows in Vestaboard
     private final int COLS=22;                  // number of cols in Vestaboard
+    private final int RETRIES=5;                // number of attempts to send board to VestaBoard
 
     private boolean truncate = false;
     private boolean wrap = true;
@@ -167,14 +168,60 @@ public class VestaBoard {
     }
 
     /**
+     * Wipe the internal virtual vestaboard object
+     * NOTE: Does not send to the web to avoid wearing out mechanical tiles.
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public void wipeBoard () throws IOException, InterruptedException {
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                board[i][j] = VestaChars.Blank;
+            }
+        }
+    }
+
+    /**
+     * Sends virtual vestaboard to company's app or real board based on configuration
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    private int sendOverTheWeb() throws IOException, InterruptedException {
+        /* Prepare Request-Response HTTP Post message to write to the VestaBoard
+         *  Be mindful if writing to virtual or real board */
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder().header("X-Vestaboard-Read-Write-Key", api_rw_key).
+                uri(URI.create("https://rw.vestaboard.com")).POST(
+                        HttpRequest.BodyPublishers.ofString(convertBoardToString())).build();
+        HttpResponse<String> response = client.send(request,
+                HttpResponse.BodyHandlers.ofString());
+
+        for (int i = 0; ((response.statusCode() != 200) && (i < RETRIES)); i++) {
+            Thread.sleep(5000);
+            response = client.send(request,
+                    HttpResponse.BodyHandlers.ofString());
+        }
+
+        System.out.println("Response code:"+response.statusCode());
+        System.out.println(response.body());
+
+        return response.statusCode();
+    }
+
+    /**
      * Convert String message into VestaBoard message
      * So far, no support for color tiles
      * @param msg Input message to write to board
      * @throws IOException Signals that an I/O exception has occurred
      * @throws InterruptedException Thread is interrupted
+     * @return status code of message post to board
      * @see  <a href="https://www.compart.com/en/unicode/">. Unicode Docs..</a>
      */
-    public void postMessage(String msg) throws IOException, InterruptedException {
+    public int postMessage(String msg) throws IOException, InterruptedException {
+        // Wipe board
+        wipeBoard();
+
         int len = msg.length();
         int row = 0;
         int col = 0;
@@ -257,15 +304,7 @@ public class VestaBoard {
 
         /* Prepare Request-Response HTTP Post message to write to the VestaBoard
         *  Be mindful if writing to virtual or real board */
-        HttpClient client = HttpClient.newHttpClient();
-         HttpRequest request = HttpRequest.newBuilder().header("X-Vestaboard-Read-Write-Key", api_rw_key).
-                 uri(URI.create("https://rw.vestaboard.com")).POST(
-                         HttpRequest.BodyPublishers.ofString(convertBoardToString())).build();
-        HttpResponse<String> response = client.send(request,
-                HttpResponse.BodyHandlers.ofString());
-
-        System.out.println("Response code:"+response.statusCode());
-        System.out.println(response.body());
+        return sendOverTheWeb();
     }
 
     /**
