@@ -1,10 +1,8 @@
 
 package mcs.mvnu.vestaboard;
 
-import netscape.javascript.JSObject;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.FileReader;
@@ -68,6 +66,8 @@ public class VestaBoard {
     private final String api_key;               // Key to allow use of Vestaboard Installable APIs
     private final String api_secret;
     private final String api_rw_key;            // Key to use for direct reading/writing of Vestaboard (max 1 per board)
+
+    private final String content_type = "application/json"; // new edition 4-2003
 
     private final HttpClient httpClient;              // Used to communicate with VestaBoard APIs
 
@@ -192,6 +192,7 @@ public class VestaBoard {
          *  Be mindful if writing to virtual or real board */
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder().header("X-Vestaboard-Read-Write-Key", api_rw_key).
+                header("Content-Type", content_type).
                 uri(URI.create("https://rw.vestaboard.com")).POST(
                         HttpRequest.BodyPublishers.ofString(convertBoardToString())).build();
         HttpResponse<String> response = client.send(request,
@@ -342,7 +343,6 @@ public class VestaBoard {
                 elements.add(e);
             }
         }
-        System.out.println("Blah");
 
         for(int i = 0; i < elements.size(); i++) {
             int value = Integer.valueOf(elements.get(i));
@@ -494,8 +494,8 @@ public class VestaBoard {
      */
     public static void main(String[] args) throws ConfigurationException, IOException, InterruptedException {
         VestaBoard v = new VestaBoard("credentials-virtual.ini");
-        System.out.println("Last Message written: " + v.readMessage());
-        v.postMessage(UNICODE_UTF16_GREEN + " MCS Discord Server Invite: " +
-                           "\nhttps://discord.gg/x2v9AWgwsC "+UNICODE_UTF16_BLUE);
+        System.out.println(v.readMessage());
+        v.postMessage("SURC 6-8 PM TODAY IN JETTER CS MAJORS SAM RIFFLE AND DAISY " +
+        "WILL BE PRESENTING SPUR '22 FINDINGS");
     }
 }
