@@ -350,6 +350,8 @@ public class VestaBoard {
                 continue;
             else if (value == VestaChars.PoppyRed.getCharValue())
                 convertedString.append(UNICODE_UTF16_RED);
+            else if (value == VestaChars.Yellow.getCharValue())
+                convertedString.append(UNICODE_UTF16_YELLOW);
             else if (value == VestaChars.ParisBlue.getCharValue())
                 convertedString.append(UNICODE_UTF16_BLUE);
             else if (value == VestaChars.White.getCharValue())
@@ -493,9 +495,8 @@ public class VestaBoard {
      * @throws InterruptedException Thread is interrupted
      */
     public static void main(String[] args) throws ConfigurationException, IOException, InterruptedException {
-        VestaBoard v = new VestaBoard("credentials-virtual.ini");
+        VestaBoard v = new VestaBoard("credentials.ini");
         System.out.println(v.readMessage());
-        v.postMessage("SURC 6-8 PM TODAY IN JETTER CS MAJORS SAM RIFFLE AND DAISY " +
-        "WILL BE PRESENTING SPUR '22 FINDINGS");
+        v.postMessage("Let your high school buddies know about MVNU SUMMER CAMPS https://tinyurl.com/2p85y2cf");
     }
 }
