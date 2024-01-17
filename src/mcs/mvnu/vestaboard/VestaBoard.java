@@ -198,6 +198,12 @@ public class VestaBoard {
         HttpResponse<String> response = client.send(request,
                 HttpResponse.BodyHandlers.ofString());
 
+        // don't try to send the same message again
+        if (response.statusCode() == 304) {
+            System.err.println("304: Trying to send the same message again");
+            return response.statusCode();
+        }
+
         for (int i = 0; ((response.statusCode() != 200) && (i < RETRIES)); i++) {
             Thread.sleep(5000);
             response = client.send(request,
@@ -495,8 +501,8 @@ public class VestaBoard {
      * @throws InterruptedException Thread is interrupted
      */
     public static void main(String[] args) throws ConfigurationException, IOException, InterruptedException {
-        VestaBoard v = new VestaBoard("credentials.ini");
+        VestaBoard v = new VestaBoard("credentials-virtual.ini");
         System.out.println(v.readMessage());
-        v.postMessage("Let your high school buddies know about MVNU SUMMER CAMPS https://tinyurl.com/2p85y2cf");
+        v.postMessage("TEST1");
     }
 }
