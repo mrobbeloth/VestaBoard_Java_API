@@ -13,6 +13,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,7 +28,7 @@ public class VestaBoard {
     /**
      * Return whether VestaBoard object is representing a white on black Vestaboard or a black on white Vestaboard.
      * Default is white on black Vestaboard
-     * @return
+     * @return board type (white lettering on black frame or black lettering on white frame)
      */
     public BoardType getVestaBoardType() {
         return bt;
@@ -35,7 +36,7 @@ public class VestaBoard {
 
     /**
      * Configure whether Vestaboard object is a white on black Vestaboard or a black on white Vestaboard
-     * Default is white on black Vestaboard
+     * Default is white lettering on black Vestaboard frame
      * @param bt
      */
     public void setVestaBoardType(BoardType bt) {
@@ -91,8 +92,8 @@ public class VestaBoard {
     private final int COLS=22;                  // number of cols in Vestaboard
     private final int RETRIES=5;                // number of attempts to send board to VestaBoard
 
-    private boolean truncate = false;
-    private boolean wrap = true;
+    private boolean truncate = false;           // Not used yet, VestaBoard came out w/ concept of VBML json support
+    private boolean wrap = true;                // Not used yet, VestaBoard came out w/ concept of VBML json support
     private final String api_key;               // Key to allow use of Vestaboard Installable APIs
     private final String api_secret;
     private final String api_rw_key;            // Key to use for direct reading/writing of Vestaboard (max 1 per board)
@@ -176,7 +177,7 @@ public class VestaBoard {
      * [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
      * [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
      * [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]]'
-     * https://rw.vestaboard.com/
+     * <a href="https://rw.vestaboard.com/">...</a>
      *
      * Prints an A in the last location
      *
@@ -215,8 +216,9 @@ public class VestaBoard {
     /**
      * Wipe the internal virtual vestaboard object
      * NOTE: Does not send to the web to avoid wearing out mechanical tiles.
-     * @throws IOException
-     * @throws InterruptedException
+     * @throws IOException Input/Output Exception
+     * @throws InterruptedException Thrown when a thread is waiting, sleeping, or otherwise occupied, and the thread is
+     * interrupted, either before or during the activity
      */
     public void wipeBoard () throws IOException, InterruptedException {
         for (int i = 0; i < ROWS; i++) {
@@ -228,9 +230,10 @@ public class VestaBoard {
 
     /**
      * Sends virtual vestaboard to company's app or real board based on configuration
-     * @return
-     * @throws IOException
-     * @throws InterruptedException
+     * @return Status code
+     * @throws IOException Input/Output Exception
+     * @throws InterruptedException Thrown when a thread is waiting, sleeping, or otherwise occupied, and the thread is
+     * interrupted, either before or during the activity.
      */
     private int sendOverTheWeb() throws IOException, InterruptedException {
         /* Prepare Request-Response HTTP Post message to write to the VestaBoard
@@ -391,16 +394,13 @@ public class VestaBoard {
         List<String> elements = new ArrayList<String>();
         for(String aMatch : allMatches) {
             String[] elementsInARow = aMatch.split(",");
-            for(String e : elementsInARow) {
-                elements.add(e);
-            }
+            elements.addAll(Arrays.asList(elementsInARow));
         }
 
-        for(int i = 0; i < elements.size(); i++) {
-            int value = Integer.valueOf(elements.get(i));
-            if (value == '[' || value == ']')
-                continue;
-            else if (value == VestaChars.PoppyRed.getCharValue())
+        for (String element : elements) {
+            int value = Integer.valueOf(element);
+            if (value == '[' || value == ']') {
+            } else if (value == VestaChars.PoppyRed.getCharValue())
                 convertedString.append(UNICODE_UTF16_RED);
             else if (value == VestaChars.Yellow.getCharValue())
                 convertedString.append(UNICODE_UTF16_YELLOW);
@@ -533,7 +533,7 @@ public class VestaBoard {
             else
                 convertedString.append("");
 
-            }
+        }
 
         System.out.println(convertedString);
         return convertedString.toString();
