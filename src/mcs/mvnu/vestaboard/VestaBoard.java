@@ -111,7 +111,7 @@ public class VestaBoard {
     public static final char UNICODE_UTF16_GREEN = '\uDFE9';        // {66} in VestaBoard char codes
     public static final char UNICODE_UTF16_VIOLET = '\uDFEA';       // {68} in VestaBoard char codes
     public static final char UNICODE_UTF16_WHITE = '\u25A1';        // {69} in VestaBoard char codes
-    public static final char UNICODE_UTF16_BLACK = '\u2B24';        // {70} in VestaBoard char codes
+    public static final char UNICODE_UTF16_BLACK = '\u25A0';        // {70} in VestaBoard char codes
 
     // BoardType
     private BoardType bt;       // Board type is white lettering on black or black lettering on white
@@ -216,11 +216,8 @@ public class VestaBoard {
     /**
      * Wipe the internal virtual vestaboard object
      * NOTE: Does not send to the web to avoid wearing out mechanical tiles.
-     * @throws IOException Input/Output Exception
-     * @throws InterruptedException Thrown when a thread is waiting, sleeping, or otherwise occupied, and the thread is
-     * interrupted, either before or during the activity
      */
-    public void wipeBoard () throws IOException, InterruptedException {
+    public void wipeBoard ()  {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
                 board[i][j] = VestaChars.Blank;
@@ -436,8 +433,6 @@ public class VestaBoard {
                 convertedString.append('J');
             else if (value == VestaChars.K.getCharValue())
                 convertedString.append('K');
-            else if (value == VestaChars.J.getCharValue())
-                convertedString.append('J');
             else if (value == VestaChars.L.getCharValue())
                 convertedString.append('L');
             else if (value == VestaChars.M.getCharValue())
