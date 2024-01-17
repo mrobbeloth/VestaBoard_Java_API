@@ -5,6 +5,7 @@ import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
@@ -23,6 +24,23 @@ import java.util.regex.Pattern;
  * @author Michael Robbeloth
  */
 public class VestaBoard {
+    /**
+     * Return whether VestaBoard object is representing a white on black Vestaboard or a black on white Vestaboard.
+     * Default is white on black Vestaboard
+     * @return
+     */
+    public BoardType getVestaBoardType() {
+        return bt;
+    }
+
+    /**
+     * Configure whether Vestaboard object is a white on black Vestaboard or a black on white Vestaboard
+     * Default is white on black Vestaboard
+     * @param bt
+     */
+    public void setVestaBoardType(BoardType bt) {
+        this.bt = bt;
+    }
 
     /* VestaBoardcii
     *  @see https://docs.vestaboard.com/characters */
@@ -37,7 +55,7 @@ public class VestaBoard {
         Ampersand(47), EqualsSign(48), Semicolon(49), Colon(50), SingleQuote(52),
         DoubleQuote(53), PercentSign(54), Comma(55), Period(56), Slash(59),
         QuestionMark(60), DegreeSign(62), PoppyRed(63), Orange(64), Yellow(65),
-        Green(66), ParisBlue(67), Violet(68), White(69);
+        Green(66), ParisBlue(67), Violet(68), White(69), Black( 70), Filled (71);
 
         private final int charValue; // Internal Vestaboard encoding for the character
 
@@ -57,6 +75,18 @@ public class VestaBoard {
         public int getCharValue() {return charValue;}
     }
 
+    public enum BoardType {
+        WHITE_ON_BLACK_VESTABOARD(1), BLACK_ON_WHITE_VESTABOARD(2);
+
+        private final int charValue;
+
+        BoardType(int i) {
+            charValue = i;
+        }
+
+        public int getCharValue() {return charValue;}
+    }
+
     private final int ROWS=6;                   // number of rows in Vestaboard
     private final int COLS=22;                  // number of cols in Vestaboard
     private final int RETRIES=5;                // number of attempts to send board to VestaBoard
@@ -73,22 +103,34 @@ public class VestaBoard {
 
     private final VestaChars[][] board;               // Data Structure Representation of VestaBoard
 
-    public static final char UNICODE_UTF16_RED = '\uDFE5';
-    public static final char UNICODE_UTF16_BLUE = '\uDFE6';
-    public static final char UNICODE_UTF16_ORANGE = '\uDFE7';
-    public static final char UNICODE_UTF16_YELLOW = '\uDFE8';
-    public static final char UNICODE_UTF16_GREEN = '\uDFE9';
-    public static final char UNICODE_UTF16_VIOLET = '\uDFEA';
-    public static final char UNICODE_UTF16_WHITE = '\u25A1';
+    public static final char UNICODE_UTF16_RED = '\uDFE5';          // {63} in VestaBoard char codes
+    public static final char UNICODE_UTF16_BLUE = '\uDFE6';         // {67} in VestaBoard char codes
+    public static final char UNICODE_UTF16_ORANGE = '\uDFE7';       // {64} in VestaBoard char codes
+    public static final char UNICODE_UTF16_YELLOW = '\uDFE8';       // {65} in VestaBoard char codes
+    public static final char UNICODE_UTF16_GREEN = '\uDFE9';        // {66} in VestaBoard char codes
+    public static final char UNICODE_UTF16_VIOLET = '\uDFEA';       // {68} in VestaBoard char codes
+    public static final char UNICODE_UTF16_WHITE = '\u25A1';        // {69} in VestaBoard char codes
+    public static final char UNICODE_UTF16_BLACK = '\u2B24';        // {70} in VestaBoard char codes
 
+    // BoardType
+    private BoardType bt;       // Board type is white lettering on black or black lettering on white
 
     /**
+     * Create a Vestaboard object
      * Base constructor, will pass credentials-virtual.ini as config file to constructor taking a string filename
      * @throws ConfigurationException Any exception that occurs while initializing a Configuration object.
      * @throws IOException Signals that an I/O exception has occurred
      */
     public VestaBoard() throws ConfigurationException, IOException {
         this("credentials-virtual.ini");
+    }
+
+    /**
+     * Create a Vestaboard virtual object
+     * @param f the full path and filename of credentials of the file to open
+     */
+    public VestaBoard(File f) throws ConfigurationException, IOException {
+        this(f.getAbsolutePath());
     }
 
     /**
@@ -117,6 +159,9 @@ public class VestaBoard {
             api_secret = iniConfiguration.getString("X-Vestaboard-Api-Secret");
             api_rw_key = iniConfiguration.getString("X-Vestaboard-Read-Write-Key");
         }
+
+        // Set board type, by default use more popular white on black vestaboard
+        bt = BoardType.WHITE_ON_BLACK_VESTABOARD;
     }
 
     /**
@@ -302,6 +347,7 @@ public class VestaBoard {
                 case UNICODE_UTF16_GREEN: board[row][col] = VestaChars.Green; break;
                 case UNICODE_UTF16_VIOLET: board[row][col] = VestaChars.Violet; break;
                 case UNICODE_UTF16_WHITE: board[row][col] = VestaChars.White; break;
+                case UNICODE_UTF16_BLACK: board[row][col] = VestaChars.Black; break;
                 case '\n': col = 0; row++; break;
                 default:
                     board[row][col] = VestaChars.Blank;
@@ -503,6 +549,6 @@ public class VestaBoard {
     public static void main(String[] args) throws ConfigurationException, IOException, InterruptedException {
         VestaBoard v = new VestaBoard("credentials-virtual.ini");
         System.out.println(v.readMessage());
-        v.postMessage("TEST1");
+        v.postMessage("TEST2");
     }
 }
