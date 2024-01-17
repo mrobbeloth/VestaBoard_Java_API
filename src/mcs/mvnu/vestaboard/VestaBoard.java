@@ -37,7 +37,7 @@ public class VestaBoard {
     /**
      * Configure whether Vestaboard object is a white on black Vestaboard or a black on white Vestaboard
      * Default is white lettering on black Vestaboard frame
-     * @param bt
+     * @param bt board type
      */
     public void setVestaBoardType(BoardType bt) {
         this.bt = bt;
@@ -92,15 +92,13 @@ public class VestaBoard {
     private final int COLS=22;                  // number of cols in Vestaboard
     private final int RETRIES=5;                // number of attempts to send board to VestaBoard
 
-    private boolean truncate = false;           // Not used yet, VestaBoard came out w/ concept of VBML json support
-    private boolean wrap = true;                // Not used yet, VestaBoard came out w/ concept of VBML json support
+    private final boolean truncate = false;     // Not used yet, VestaBoard came out w/ concept of VBML json support
+    private final boolean  wrap = true;         // Not used yet, VestaBoard came out w/ concept of VBML json support
     private final String api_key;               // Key to allow use of Vestaboard Installable APIs
     private final String api_secret;
     private final String api_rw_key;            // Key to use for direct reading/writing of Vestaboard (max 1 per board)
 
     private final String content_type = "application/json"; // new edition 4-2003
-
-    private final HttpClient httpClient;              // Used to communicate with VestaBoard APIs
 
     private final VestaChars[][] board;               // Data Structure Representation of VestaBoard
 
@@ -110,8 +108,8 @@ public class VestaBoard {
     public static final char UNICODE_UTF16_YELLOW = '\uDFE8';       // {65} in VestaBoard char codes
     public static final char UNICODE_UTF16_GREEN = '\uDFE9';        // {66} in VestaBoard char codes
     public static final char UNICODE_UTF16_VIOLET = '\uDFEA';       // {68} in VestaBoard char codes
-    public static final char UNICODE_UTF16_WHITE = '\u25A1';        // {69} in VestaBoard char codes
-    public static final char UNICODE_UTF16_BLACK = '\u25A0';        // {70} in VestaBoard char codes
+    public static final char UNICODE_UTF16_WHITE = '□';        // Unicode 25A1 or {69} in VestaBoard char codes
+    public static final char UNICODE_UTF16_BLACK = '■';        // Unicode 25A0 {70} in VestaBoard char codes
 
     // BoardType
     private BoardType bt;       // Board type is white lettering on black or black lettering on white
@@ -148,7 +146,6 @@ public class VestaBoard {
                 board[i][j] = VestaChars.Blank;
             }
         }
-        httpClient = HttpClient.newHttpClient();
 
         // Read in ini file
         INIConfiguration iniConfiguration = new INIConfiguration();
@@ -178,12 +175,9 @@ public class VestaBoard {
      * [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
      * [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]]'
      * <a href="https://rw.vestaboard.com/">...</a>
-     *
      * Prints an A in the last location
-     *
      * The string values in each cell must be the Vesta character encoding
      * and not the ASCII encoding
-     *
      * @see <a href="https://docs.vestaboard.com/read-write">...</a>
      * @see <a href="https://docs.vestaboard.com/characters">...</a>
      * @return curl data compatible string
@@ -379,25 +373,23 @@ public class VestaBoard {
         JSONObject jsonObjCM = jsonObj.getJSONObject("currentMessage");
         String layoutArray = jsonObjCM.getString("layout");
 
-        char[] layoutArrayAsCharArr = layoutArray.toCharArray();
         StringBuilder convertedString = new StringBuilder();
         layoutArray = layoutArray.substring(1,layoutArray.length()-1);
         final Pattern pattern = Pattern.compile("([0-9]+(,[0-9]+)+)");
         final Matcher matcher = pattern.matcher(layoutArray);
-        List<String> allMatches = new ArrayList<String>();
+        List<String> allMatches = new ArrayList<>();
         while (matcher.find()) {
             allMatches.add(matcher.group());
          }
-        List<String> elements = new ArrayList<String>();
+        List<String> elements = new ArrayList<>();
         for(String aMatch : allMatches) {
             String[] elementsInARow = aMatch.split(",");
             elements.addAll(Arrays.asList(elementsInARow));
         }
 
         for (String element : elements) {
-            int value = Integer.valueOf(element);
-            if (value == '[' || value == ']') {
-            } else if (value == VestaChars.PoppyRed.getCharValue())
+            int value = Integer.parseInt(element);
+            if (value == VestaChars.PoppyRed.getCharValue())
                 convertedString.append(UNICODE_UTF16_RED);
             else if (value == VestaChars.Yellow.getCharValue())
                 convertedString.append(UNICODE_UTF16_YELLOW);
@@ -525,8 +517,6 @@ public class VestaBoard {
                 convertedString.append(',');
             else if (value == VestaChars.Period.getCharValue())
                 convertedString.append('.');
-            else
-                convertedString.append("");
 
         }
 
@@ -544,6 +534,12 @@ public class VestaBoard {
     public static void main(String[] args) throws ConfigurationException, IOException, InterruptedException {
         VestaBoard v = new VestaBoard("credentials-virtual.ini");
         System.out.println(v.readMessage());
-        v.postMessage("TEST2");
+        int result = v.postMessage("TEST7");
+        if (result != 200) {
+            System.err.println("Problem occurred");
+        }
+        else {
+            System.out.println("Everything is good.");
+        }
     }
 }
