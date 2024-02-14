@@ -532,9 +532,9 @@ public class VestaBoard {
      * @throws InterruptedException Thread is interrupted
      */
     public static void main(String[] args) throws ConfigurationException, IOException, InterruptedException {
-        VestaBoard v = new VestaBoard("credentials-virtual.ini");
+        VestaBoard v = new VestaBoard("credentials.ini");
         System.out.println(v.readMessage());
-        int result = v.postMessage("TEST7");
+        int result = v.postMessage("Today is 2/13/2024 " + VestaBoard.UNICODE_UTF16_VIOLET);
         if (result != 200) {
             System.err.println("Problem occurred");
         }
